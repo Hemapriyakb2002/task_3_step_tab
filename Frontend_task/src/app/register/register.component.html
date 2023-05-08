@@ -1,0 +1,145 @@
+<p>User Registration</p>
+  <div>
+      <mat-stepper [linear]="isLinear" #stepper>
+          <mat-step [stepControl]="firstFormGroup" label="Fill out your info">
+              <form [formGroup]="firstFormGroup">
+                      <mat-form-field appearance="fill" class="field">
+                          <mat-label>Name</mat-label>
+                          <input matInput placeholder="Enter your name" formControlName="firstCtrlName" >
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlName'].hasError('required')">
+                            Name is required.
+                          </mat-error>
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlName'].hasError('pattern')">
+                            Please enter a valid name.
+                          </mat-error>
+                      </mat-form-field>  <br>
+                      <mat-form-field appearance="fill" class="field">
+                          <mat-label>Email</mat-label>
+                          <input matInput placeholder="abc@gmail.com" formControlName="firstCtrlMail" >
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlMail'].hasError('required')">
+                            Email is required.
+                          </mat-error>
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlMail'].hasError('email')">
+                            Please enter a valid email id.
+                          </mat-error>
+                      </mat-form-field>  <br>
+                      <mat-form-field appearance="fill" class="field">
+                          <mat-label>Phone</mat-label>
+                          <input matInput placeholder="Enter 10-digit number" formControlName="firstCtrlPhone" >
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlPhone'].hasError('required')">
+                            Phone number is required.
+                          </mat-error>
+                          <mat-error *ngIf="firstSubmitted && firstFormGroup.controls['firstCtrlPhone'].hasError('pattern')">
+                            Please enter a 10-digit mobile number.
+                          </mat-error>
+                      </mat-form-field>
+                  <div>
+                    <button mat-button matStepperNext (click)="firstData()">Next</button>
+                  </div>
+              </form>
+          </mat-step>
+
+          <mat-step [stepControl]="secondFormGroup" label="Fill out your password">
+            <form [formGroup]="secondFormGroup">
+              <mat-form-field appearance="fill" class="field">
+                <mat-label>password</mat-label>
+                <input matInput formControlName="secondCtrl" placeholder="Enter strong password" type="password">
+                <mat-error *ngIf="secondSubmitted && secondFormGroup.controls['secondCtrl'].hasError('required')">
+                  Password is required.
+                </mat-error>
+                <mat-error *ngIf="secondSubmitted && secondFormGroup.controls['secondCtrl'].hasError('minlength')">
+                  Password must be at least 8 characters long.
+                </mat-error>
+                <mat-error *ngIf="secondSubmitted && secondFormGroup.controls['secondCtrl'].hasError('pattern')">
+                  Password must contain at least one uppercase letter, at least one lowercase letter, and at least one number.
+                </mat-error>
+              </mat-form-field> <br><br><br>
+              <div>
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext (click)="secondData()">Next</button>
+              </div>
+            </form>
+          </mat-step>
+
+          <mat-step [stepControl]="thirdFormGroup" label="Fill out your address">
+            <form [formGroup]="thirdFormGroup">
+              <mat-form-field appearance="fill" class="field">
+                <mat-label>Address</mat-label>
+                <input #mapSearchField type="text" matInput formControlName="thirdCtrl" placeholder="Enter your address">
+                <mat-error *ngIf="thirdSubmitted && thirdFormGroup.controls['thirdCtrl'].hasError('required')">
+                  Address is required.
+                </mat-error>
+              </mat-form-field>
+
+              <google-map
+          height="500px"
+          width="100%"
+          [zoom]="zoom"
+          [center]="center"
+          [options]="options"
+        >
+ 
+  <map-info-window>{{ infoContent }}</map-info-window>
+    </google-map>
+ 
+        <button (click)="zoomIn()">Zoom in</button>
+        <button (click)="zoomOut()">Zoom out</button>
+            <div class="button">
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button matStepperNext (click)="thirdData()">Next</button>
+            </div>
+            </form>
+          </mat-step>
+
+          <mat-step [stepControl]="fourthFormGroup" label="Upload your Profile DP">
+            <form [formGroup]="fourthFormGroup">
+              <h3>Upload your File here
+                <input (change)="fileEvent($event); previewImage()" formControlName="File" type="file" name="file">
+                <mat-error *ngIf="fourthSubmitted && fourthFormGroup.controls['fourthCtrl'].hasError('required')">
+                  Please select a file to upload.
+                </mat-error>
+                <mat-error *ngIf="fourthSubmitted && fourthFormGroup.controls['fourthCtrl'].hasError('maxSize')">
+                  File size exceeds the limit of {{fileSizeLimit / 1024 / 1024}} MB.
+                </mat-error>
+                <mat-error *ngIf="fourthSubmitted && fourthFormGroup.controls['fourthCtrl'].hasError('fileType')">
+                  File type is not supported. Please upload a jpg, jpeg, png file.
+                </mat-error>
+              </h3>
+
+              <ng-container *ngIf="!service.imageUrl && fourthFormGroup.controls['fourthCtrl'].valid; else preview">
+                <h3>Uploading....</h3>
+                <mat-spinner></mat-spinner>
+              </ng-container>              
+              <ng-template #preview>
+                <img *ngIf="service.imageUrl" [src]="service.imageUrl" alt="Preview" height="300px" width="300px">
+              </ng-template>
+              
+              <div class="button">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext (click)="fourthData()">Next</button>
+              </div>
+            </form>
+          </mat-step>        
+
+          <mat-step>
+            <ng-template matStepLabel>Submit your Data</ng-template>
+            <div>
+              <h2>Here are the details you provided:</h2>
+              <h3>Check the details once you before submitted.</h3>
+              <ul>
+                <li>Name: {{firstFormGroup.value.firstCtrlName}}</li>
+                <li>Email: {{firstFormGroup.value.firstCtrlMail}}</li>
+                <li>Phone: {{firstFormGroup.value.firstCtrlPhone}}</li>
+                <li>Password: {{secondFormGroup.value.secondCtrl}}</li>
+                <li>Address: {{thirdFormGroup.value.thirdCtrl}}</li>
+                <li>Profile Picture: </li><img *ngIf="service.imageUrl" [src]="service.imageUrl" alt="Preview" height="300px" width="300px">
+              </ul>
+            </div>
+            <div>
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-button (click)="stepper.reset()">Reset</button>
+              <button (click)="submitData()">Submit</button>
+            </div>
+          </mat-step>
+        </mat-stepper>
+  </div>
